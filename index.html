@@ -133,12 +133,38 @@
         /* Contact Section */
         #contact {
             padding: 50px;
-            background: linear-gradient(135deg, #555, #333);
             color: #fff;
             text-align: center;
             transition: background 0.5s ease;
             border-radius: 10px;
             margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #contact:before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(90deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1));
+            background-size: 400% 400%;
+            animation: bg-animation 10s infinite;
+            z-index: -1;
+        }
+
+        @keyframes bg-animation {
+            0% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 100%;
+            }
+            100% {
+                background-position: 0% 0%;
+            }
         }
 
         #contact h2 {
@@ -227,7 +253,7 @@
                 </li>
                 <li>
                     <h3>Engineering Financial Prompts for Utilizing LLM</h3>
-                    <p>Creating prompts tailored for utilizing (LLM) in the financial domain.</p>
+                    <p>Creating prompts tailored for utilizing Large Language Models (LLM) in the financial domain.</p>
                 </li>
                 <li>
                     <h3>Systematic Trading</h3>
