@@ -83,10 +83,34 @@
             list-style: none;
             padding: 0;
             margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         #services li {
             margin-bottom: 10px;
+            width: calc(33.333% - 20px);
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #333;
+            margin-right: 20px;
+            margin-top: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        #services li:nth-child(3n) {
+            margin-right: 0;
+        }
+
+        #services li h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #fff;
+        }
+
+        #services li p {
+            color: #ccc;
         }
 
         /* Contact Section */
@@ -115,6 +139,9 @@
             #about, #services, #contact {
                 padding: 30px;
             }
+            #services li {
+                width: calc(50% - 20px);
+            }
         }
     </style>
 </head>
@@ -140,34 +167,44 @@
             <h2>Our Service of expertise</h2>
             <ul>
                 <li>
-                    Quantitative Trading Strategies: Implementing trading strategies based on quantitative analysis.
+                    <h3>Quantitative Trading Strategies</h3>
+                    <p>Implementing trading strategies based on quantitative analysis.</p>
                 </li>
                 <li>
-                    Technical Analysis: Analyzing statistical trends gathered from trading activity and market prices.
+                    <h3>Technical Analysis</h3>
+                    <p>Analyzing statistical trends gathered from trading activity and market prices.</p>
                 </li>
                 <li>
-                    Algorithmic Trading: Executing orders using automated pre-programmed trading instructions.
+                    <h3>Algorithmic Trading</h3>
+                    <p>Executing orders using automated pre-programmed trading instructions.</p>
                 </li>
                 <li>
-                    Risk Management: Assessing and mitigating potential risks in investment strategies.
+                    <h3>Risk Management</h3>
+                    <p>Assessing and mitigating potential risks in investment strategies.</p>
                 </li>
                 <li>
-                    Financial Technology Solutions: Developing and implementing innovative financial technology solutions.
+                    <h3>Financial Technology Solutions</h3>
+                    <p>Developing and implementing innovative financial technology solutions.</p>
                 </li>
                 <li>
-                    Engineering Financial Prompts for Utilizing LLM: Creating prompts tailored for utilizing Large Language Models (LLM) in the financial domain.
+                    <h3>Engineering Financial Prompts for Utilizing LLM</h3>
+                    <p>Creating prompts tailored for utilizing Large Language Models (LLM) in the financial domain.</p>
                 </li>
                 <li>
-                    Systematic Trading: Using a disciplined, rule-based approach to investment management.
+                    <h3>Systematic Trading</h3>
+                    <p>Using a disciplined, rule-based approach to investment management.</p>
                 </li>
                 <li>
-                    Machine Learning: Developing algorithms that enable computers to learn from and make decisions or predictions based on data.
+                    <h3>Machine Learning</h3>
+                    <p>Developing algorithms that enable computers to learn from and make decisions or predictions based on data.</p>
                 </li>
                 <li>
-                    Linear Regression: Statistical method to model the relationship between two variables.
+                    <h3>Linear Regression</h3>
+                    <p>Statistical method to model the relationship between two variables.</p>
                 </li>
                 <li>
-                    FinGPT: Utilizing GPT-based models for generating financial-related content and insights.
+                    <h3>FinGPT</h3>
+                    <p>Utilizing GPT-based models for generating financial-related content and insights.</p>
                 </li>
             </ul>
         </section>
