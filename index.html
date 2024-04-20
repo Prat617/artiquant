@@ -18,18 +18,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f5f5;
             overflow-x: hidden;
-            background-image: linear-gradient(45deg, rgba(20,20,20,0.5) 25%, transparent 25%, transparent 50%, rgba(20,20,20,0.5) 50%, rgba(20,20,20,0.5) 75%, transparent 75%, transparent);
-            background-size: 40px 40px;
-            animation: animatedBackground 3s linear infinite;
-        }
-
-        @keyframes animatedBackground {
-            0% {
-                background-position: 0 0;
-            }
-            100% {
-                background-position: 40px 40px;
-            }
+            position: relative;
         }
 
         header {
@@ -39,6 +28,8 @@
             text-align: center;
             font-size: 24px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
         }
 
         header img {
@@ -52,6 +43,8 @@
             padding: 10px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 2;
         }
 
         nav a {
@@ -67,6 +60,8 @@
             background-color: #fff;
             border-radius: 10px;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative;
+            z-index: 2;
         }
 
         /* About Section */
@@ -78,6 +73,8 @@
             transition: background 0.5s ease;
             border-radius: 10px;
             margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
         }
 
         #about h2 {
@@ -100,6 +97,8 @@
             transition: background 0.5s ease;
             border-radius: 10px;
             margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
         }
 
         #services ul {
@@ -151,6 +150,8 @@
             transition: background 0.5s ease;
             border-radius: 10px;
             margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
         }
 
         #contact h2 {
@@ -181,6 +182,25 @@
             color: #fff;
             padding: 20px;
             text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Spline 3D animation */
+        .spline-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
         }
 
         /* Responsive */
@@ -274,5 +294,18 @@
         <p>&copy; 2024 Artiquant - Quantitative & Technical Trading LLP. All rights reserved.</p>
     </footer>
 
+    <!-- Spline 3D animation -->
+    <div class="spline-animation"></div>
+    <script src="https://spline.3d.io/spline/runtime.js"></script>
+    <script src="https://spline.3d.io/spline/editor.js"></script>
+    <script>
+        new SplineRuntime({
+            domElement: document.querySelector('.spline-animation'),
+            projectId: 'your_project_id',
+            preset: 'default',
+            autoplay: true,
+            // More options here
+        });
+    </script>
 </body>
 </html>
