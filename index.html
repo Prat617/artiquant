@@ -4,12 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Artiquant - Quantitative & Technical LLP</title>
-    <meta name="description" content="Artiquant is a quantitative and technical  LLP specializing in utilizing technology to build and finance innovative solutions.">
+    <meta name="description" content="Artiquant is a quantitative and technical LLP specializing in utilizing technology to build and finance innovative solutions.">
     <meta name="keywords" content="quantitative trading, technical trading, algorithmic trading, financial technology, risk management">
     <link rel="icon" type="image/x-icon" href="favicon.ico">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        /* General Styles */
+        :root {
+            --primary-color: #007aff;
+            --secondary-color: #00c7ff;
+            --background-color: #0a0a0a;
+            --text-color: #e0e0e0;
+            --card-background: rgba(255, 255, 255, 0.05);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -17,9 +25,9 @@
         }
 
         body {
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background-color: #000;
-            color: #e0e0e0;
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
@@ -27,7 +35,7 @@
         }
 
         #particles-js {
-            position: absolute;
+            position: fixed;
             width: 100%;
             height: 100%;
             z-index: 0;
@@ -49,6 +57,11 @@
         header img {
             width: 150px;
             height: auto;
+            transition: transform 0.3s ease;
+        }
+
+        header img:hover {
+            transform: scale(1.1);
         }
 
         nav {
@@ -61,6 +74,11 @@
             width: 100%;
             z-index: 2;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+
+        nav.scrolled {
+            background-color: rgba(0, 0, 0, 0.95);
         }
 
         nav a {
@@ -70,17 +88,30 @@
             font-weight: 500;
             font-size: 18px;
             transition: color 0.3s;
+            position: relative;
         }
 
-        nav a:hover {
-            color: #007aff;
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--primary-color);
+            transform: scaleX(0);
+            transition: transform 0.3s ease;
+        }
+
+        nav a:hover::after {
+            transform: scaleX(1);
         }
 
         .container {
             max-width: 1200px;
             margin: 120px auto 30px;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(255, 255, 255, 0.02);
             border-radius: 15px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -95,7 +126,19 @@
         section h2 {
             font-size: 42px;
             margin-bottom: 20px;
-            color: #007aff;
+            color: var(--primary-color);
+            position: relative;
+            display: inline-block;
+        }
+
+        section h2::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 3px;
+            bottom: -10px;
+            left: 25%;
+            background-color: var(--secondary-color);
         }
 
         section p {
@@ -119,11 +162,29 @@
             margin: 20px;
             padding: 30px;
             border-radius: 15px;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--card-background);
             transition: all 0.3s ease;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             backdrop-filter: blur(10px);
             cursor: pointer;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #expertise li::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            transform: scale(0);
+            transition: transform 0.5s ease;
+        }
+
+        #expertise li:hover::before {
+            transform: scale(1);
         }
 
         #expertise li:hover {
@@ -157,13 +218,13 @@
         }
 
         .contact-info a {
-            color: #007aff;
+            color: var(--primary-color);
             text-decoration: none;
-            transition: text-decoration 0.3s;
+            transition: color 0.3s;
         }
 
         .contact-info a:hover {
-            text-decoration: underline;
+            color: var(--secondary-color);
         }
 
         footer {
@@ -171,8 +232,7 @@
             color: #fff;
             padding: 20px;
             text-align: center;
-            position: absolute;
-            bottom: 0;
+            position: relative;
             width: 100%;
             z-index: 2;
         }
@@ -222,177 +282,158 @@
 
     <nav>
         <a href="#about">About</a>
-        <a href="#expertise">Our Expertise</a> <!-- Updated link text here -->
+        <a href="#expertise">Our Expertise</a>
         <a href="#contact">Contact</a>
     </nav>
 
     <div class="container">
         <section id="about">
             <h2>About Us</h2>
-            <p>Artiquant is a quantitative and technical  LLP specializing in utilizing technology to build and develop finance innovative solutions. Leveraging advanced quantitative models and technical analysis allows for a systematic and informed decision-making process in identifying trading opportunities in various markets</p>
+            <p>Artiquant is a cutting-edge quantitative and technical LLP, specializing in leveraging advanced technology to build and develop innovative financial solutions. Our approach combines sophisticated quantitative models with in-depth technical analysis, enabling systematic and informed decision-making in identifying lucrative trading opportunities across various markets.</p>
+        </section>
 
-            <section id="expertise"> <!-- Updated ID here -->
-                <h2>Our Expertise</h2> <!-- Updated heading here -->
-                <ul>
-                    <li>
-                        <h3>Quantitative Trading Strategies</h3>
-                        <p>Implementing trading strategies based on quantitative analysis.</p>
-                    </li>
-                    <li>
-                        <h3>Technical Analysis</h3>
-                        <p>Analyzing statistical trends gathered from trading activity and market prices.</p>
-                    </li>
-                    <li>
-                        <h3>Algorithmic Trading</h3>
-                        <p>Executing orders using automated pre-programmed trading instructions.</p>
-                    </li>
-                    <li>
-                        <h3>Risk Management</h3>
-                        <p>Assessing and mitigating potential risks in investment strategies.</p>
-                    </li>
-                    <li>
-                        <h3>Financial Technology Solutions</h3>
-                        <p>Developing and implementing innovative financial technology solutions.</p>
-                    </li>
-                    <li>
-                        <h3>Engineering Financial Prompts for Utilizing LLM</h3>
-                        <p>Creating prompts tailored for utilizing LLM in the financial domain.</p>
-                    </li>
-                    <li>
-                        <h3>Systematic Trading</h3>
-                        <p>Using a disciplined, rule-based approach to investment management.</p>
-                    </li>
-                    <li>
-                        <h3>Machine Learning</h3>
-                        <p>Developing algorithms that enable computers to learn from and make decisions or predictions based on data.</p>
-                    </li>
-                    <li>
-                        <h3>FinGPT</h3>
-                        <p>Utilizing GPT-based models for generating financial-related content and insights.</p>
-                    </li>
-                </ul>
-            </section>
-        
-            <section id="contact">
-                <h2>Contact Us</h2>
-                <div class="contact-info">
-                    <p>Please reach out to us:</p>
-                    <p>Email: <a href="mailto:artiquant@gmail.com">artiquant@gmail.com</a></p>
-                    <p>X: <a href="https://twitter.com/quant618" target="_blank">@quant618</a></p>
-                </div>
-            </section>
-        </div>
-        
-        <footer>
-            <p>&copy; 2024 Artiquant. All rights reserved.</p>
-        </footer>
-        
-        <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-        <script>
-            particlesJS('particles-js', {
-                "particles": {
-                    "number": {
-                        "value": window.innerWidth <= 768 ? 50 : 100
-                    },
-                    "density": {
+        <section id="expertise">
+            <h2>Our Expertise</h2>
+            <ul>
+                <li>
+                    <h3><i class="fas fa-chart-line"></i> Quantitative Trading Strategies</h3>
+                    <p>Implementing data-driven trading strategies based on advanced quantitative analysis.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-analytics"></i> Technical Analysis</h3>
+                    <p>Analyzing statistical trends and patterns derived from trading activity and market prices.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-robot"></i> Algorithmic Trading</h3>
+                    <p>Executing orders using sophisticated, pre-programmed trading instructions for optimal performance.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-shield-alt"></i> Risk Management</h3>
+                    <p>Assessing and mitigating potential risks in investment strategies using advanced modeling techniques.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-microchip"></i> Financial Technology Solutions</h3>
+                    <p>Developing and implementing cutting-edge financial technology solutions to stay ahead of the curve.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-brain"></i> Engineering Financial Prompts for LLM</h3>
+                    <p>Creating sophisticated prompts tailored for utilizing Large Language Models in the financial domain.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-cogs"></i> Systematic Trading</h3>
+                    <p>Employing a disciplined, rule-based approach to investment management for consistent results.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-network-wired"></i> Machine Learning</h3>
+                    <p>Developing advanced algorithms that enable computers to learn from data and make intelligent financial decisions.</p>
+                </li>
+                <li>
+                    <h3><i class="fas fa-code-branch"></i> FinGPT</h3>
+                    <p>Harnessing the power of GPT-based models for generating high-quality financial content and actionable insights.</p>
+                </li>
+            </ul>
+        </section>
+    
+        <section id="contact">
+            <h2>Contact Us</h2>
+            <div class="contact-info">
+                <p>We're always eager to discuss new opportunities and collaborations. Reach out to us:</p>
+                <p>Email: <a href="mailto:artiquant@gmail.com"><i class="fas fa-envelope"></i> artiquant@gmail.com</a></p>
+                <p>X: <a href="https://twitter.com/quant618" target="_blank"><i class="fab fa-twitter"></i> @quant618</a></p>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <p>&copy; 2024 Artiquant. All rights reserved. </p>
+    </footer>
+    
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": {
+                    "value": window.innerWidth <= 768 ? 50 : 100
+                },
+                "color": {
+                    "value": "#007aff"
+                },
+                "shape": {
+                    "type": "circle",
+                },
+                "opacity": {
+                    "value": 0.5,
+                    "random": true,
+                    "anim": {
                         "enable": true,
-                        "value_area": 800
-                    },
-                    "color": {
-                        "value": "#ffffff"
-                    },
-                    "shape": {
-                        "type": "circle",
-                        "stroke": {
-                            "width": 0,
-                            "color": "#000000"
-                        },
-                        "polygon": {
-                            "nb_sides": 5
-                        }
-                    },
-                    "opacity": {
-                        "value": 0.5,
-                        "random": false,
-                        "anim": {
-                            "enable": false,
-                            "speed": 1,
-                            "opacity_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "size": {
-                        "value": 3,
-                        "random": true,
-                        "anim": {
-                            "enable": false,
-                            "speed": 40,
-                            "size_min": 0.1,
-                            "sync": false
-                        }
-                    },
-                    "line_linked": {
-                        "enable": true,
-                        "distance": 150,
-                        "color": "#ffffff",
-                        "opacity": 0.4,
-                        "width": 1
-                    },
-                    "move": {
-                        "enable": true,
-                        "speed": 6,
-                        "direction": "none",
-                        "random": false,
-                        "straight": false,
-                        "out_mode": "out",
-                        "bounce": false,
-                        "attract": {
-                            "enable": false,
-                            "rotateX": 600,
-                            "rotateY": 1200
-                        }
+                        "speed": 1,
+                        "opacity_min": 0.1,
+                        "sync": false
                     }
                 },
-                "interactivity": {
-                    "detect_on": "canvas",
-                    "events": {
-                        "onhover": {
-                            "enable": true,
-                            "mode": "grab"
-                        },
-                        "onclick": {
-                            "enable": true,
-                            "mode": "push"
-                        },
-                        "resize": true
-                    },
-                    "modes": {
-                        "grab": {
-                            "distance": 140,
-                            "line_linked": {
-                                "opacity": 1
-                            }
-                        },
-                        "bubble": {
-                            "distance": 400,
-                            "size": 40,
-                            "duration": 2,
-                            "opacity": 8,
-                            "speed": 3
-                        },
-                        "repulse": {
-                            "distance": 200,
-                            "duration": 0.4
-                        },
-                        "push": {
-                            "particles_nb": 4
-                        },
-                        "remove": {
-                            "particles_nb": 2
-                        }
-                    }
+                "size": {
+                    "value": 3,
+                    "random": true,
                 },
-                "retina_detect": true
-            });
-        </script>
-        
+                "line_linked": {
+                    "enable": true,
+                    "distance": 150,
+                    "color": "#007aff",
+                    "opacity": 0.4,
+                    "width": 1
+                },
+                "move": {
+                    "enable": true,
+                    "speed": 2,
+                    "direction": "none",
+                    "random": false,
+                    "straight": false,
+                    "out_mode": "out",
+                    "bounce": false,
+                    "attract": {
+                        "enable": false,
+                        "rotateX": 600,
+                        "rotateY": 1200
+                    }
+                }
+            },
+            "interactivity": {
+                "detect_on": "canvas",
+                "events": {
+                    "onhover": {
+                        "enable": true,
+                        "mode": "grab"
+                    },
+                    "onclick": {
+                        "enable": true,
+                        "mode": "push"
+                    },
+                    "resize": true
+                },
+                "modes": {
+                    "grab": {
+                        "distance": 140,
+                        "line_linked": {
+                            "opacity": 1
+                        }
+                    },
+                    "push": {
+                        "particles_nb": 4
+                    },
+                }
+            },
+            "retina_detect": true
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+    </script>
+</body>
+</html>
