@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Artiquant — Quantitative & Technical LLP</title>
+<meta name="description" content="Artiquant is a quantitative trading and financial technology LLP — systematic strategies, AI-driven research, and institutional-grade risk engineering.">
+<meta name="keywords" content="quantitative trading, algorithmic trading, prop trading, AI agents, financial technology, risk management, systematic trading, NQ futures">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+:root {
+  --bg:        #050608;
+  --bg2:       #0b0d12;
+  --surface:   rgba(255,255,255,0.035);
+  --border:    rgba(255,255,255,0.07);
+  --accent:    #00e5ff;
+  --accent2:   #0066ff;
+  --accent3:   #7b2fff;
+  --text:      #dde3f0;
+  --muted:     #6b7591;
+  --white:     #f0f4ff;
+  --ff-head:   'Syne', sans-serif;
+  --ff-mono:   'DM Mono', monospace;
+  --ease:      cubic-bezier(0.16,1,0.3,1);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--ff-mono);
+  background: var(--bg);
+  color: var(--text);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ── CUSTOM CURSOR ── */
+#cursor {
+  position: fixed;
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%,-50%);
+  transition: width .2s var(--ease), height .2s var(--ease), background .2s;
+  mix-blend-mode: screen;
+}
+#cursor-ring {
+  position: fixed;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(0,229,255,0.4);
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%,-50%);
+  transition: all .12s var(--ease);
+}
+body:has(a:hover) #cursor { width:18px; height:18px; background: var(--accent2); }
+body:has(a:hover) #cursor-ring { width:52px; height:52px; border-color: rgba(0,102,255,0.5); }
+
+/* ── CANVAS BG ── */
+#bg-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  opacity: .55;
+}
+
+/* ── NOISE OVERLAY ── */
+body::after {
+  content:'';
+  position: fixed;
+  inset:0;
+  z-index: 1;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: .025;
+  pointer-events: none;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 48px;
+  background: rgba(5,6,8,0);
+  border-bottom: 1px solid transparent;
+  transition: background .4s, border-color .4s, padding .4s;
+}
+nav.scrolled {
+  background: rgba(5,6,8,0.88);
+  border-color: var(--border);
+  padding: 14px 48px;
+  backdrop-filter: blur(20px);
+}
+.nav-logo {
+  font-family: var(--ff-head);
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -.5px;
+  color: var(--white);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.nav-logo span {
+  color: var(--accent);
+}
+.nav-links { display: flex; gap: 36px; list-style: none; }
+.nav-links a {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--muted);
+  text-decoration: none;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  transition: color .25s;
+  position: relative;
+}
+.nav-links a::after {
+  content:'';
+  position: absolute;
+  bottom: -4px; left: 0; right: 0;
+  height: 1px;
+  background: var(--accent);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .3s var(--ease);
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links a:hover::after { transform: scaleX(1); }
+
+/* ── HERO ── */
+#hero {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 0 10vw;
+  overflow: hidden;
+}
+
+.hero-tag {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-family: var(--ff-mono);
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp .8s var(--ease) .2s forwards;
+}
+
+.hero-h1 {
+  font-family: var(--ff-head);
+  font-size: clamp(52px, 8vw, 110px);
+  font-weight: 800;
+  line-height: .95;
+  letter-spacing: -3px;
+  color: var(--white);
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp .9s var(--ease) .35s forwards;
+}
+.hero-h1 em {
+  font-style: normal;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 60%, var(--accent3) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.hero-sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 540px;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp .9s var(--ease) .5s forwards;
+}
+
+.hero-cta {
+  display: flex;
+  gap: 16px;
+  opacity: 0;
+  animation: fadeUp .9s var(--ease) .65s forwards;
+}
+.btn {
+  font-family: var(--ff-mono);
+  font-size: 13px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 14px 32px;
+  border-radius: 3px;
+  transition: all .3s var(--ease);
+  cursor: none;
+}
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  font-weight: 500;
+}
+.btn-primary:hover {
+  background: var(--white);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(0,229,255,0.25);
+}
+.btn-ghost {
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: transparent;
+}
+.btn-ghost:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+
+.hero-stats {
+  position: absolute;
+  right: 8vw;
+  bottom: 12vh;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  opacity: 0;
+  animation: fadeUp .9s var(--ease) .8s forwards;
+}
+.stat {
+  text-align: right;
+}
+.stat-num {
+  font-family: var(--ff-head);
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1;
+  letter-spacing: -2px;
+}
+.stat-num span { color: var(--accent); }
+.stat-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 36px;
+  left: 10vw;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  animation: fadeIn 1s ease 1.5s forwards;
+}
+.scroll-line {
+  width: 48px;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* ── TICKER ── */
+.ticker-wrap {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,229,255,0.03);
+  overflow: hidden;
+  padding: 12px 0;
+}
+.ticker-inner {
+  display: flex;
+  animation: ticker 28s linear infinite;
+  white-space: nowrap;
+}
+.ticker-item {
+  font-family: var(--ff-mono);
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 0 40px;
+  flex-shrink: 0;
+}
+.ticker-item span { color: var(--accent); }
+
+/* ── SECTION BASE ── */
+section {
+  position: relative;
+  z-index: 2;
+  padding: 120px 10vw;
+}
+
+.section-label {
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  font-family: var(--ff-mono);
+}
+.section-h2 {
+  font-family: var(--ff-head);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 800;
+  letter-spacing: -2px;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+.section-sub {
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--muted);
+  max-width: 560px;
+  margin-bottom: 72px;
+}
+
+/* ── ABOUT ── */
+#about {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.about-text .section-sub { margin-bottom: 40px; }
+.about-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.about-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 28px 24px;
+  transition: all .4s var(--ease);
+}
+.about-card:hover {
+  background: rgba(0,229,255,0.06);
+  border-color: rgba(0,229,255,0.2);
+  transform: translateY(-4px);
+}
+.about-card-icon {
+  font-size: 20px;
+  color: var(--accent);
+  margin-bottom: 14px;
+}
+.about-card h4 {
+  font-family: var(--ff-head);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+.about-card p {
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--muted);
+}
+
+/* ── EXPERTISE GRID ── */
+#expertise { background: var(--bg2); }
+.expertise-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.exp-card {
+  background: var(--bg2);
+  padding: 40px 36px;
+  border-right: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  transition: all .4s var(--ease);
+  position: relative;
+  overflow: hidden;
+}
+.exp-card::before {
+  content:'';
+  position: absolute;
+  top:0; left:0; right:0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent2), var(--accent), var(--accent3));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform .5s var(--ease);
+}
+.exp-card:hover::before { transform: scaleX(1); }
+.exp-card:hover { background: rgba(0,229,255,0.04); }
+.exp-num {
+  font-family: var(--ff-head);
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+.exp-icon {
+  font-size: 22px;
+  color: var(--accent);
+  margin-bottom: 16px;
+  transition: transform .4s var(--ease);
+}
+.exp-card:hover .exp-icon { transform: scale(1.15); }
+.exp-card h3 {
+  font-family: var(--ff-head);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.exp-card p {
+  font-size: 13px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.exp-tag {
+  display: inline-block;
+  margin-top: 16px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--accent2);
+  border: 1px solid rgba(0,102,255,0.3);
+  padding: 3px 10px;
+  border-radius: 2px;
+}
+
+/* ── EDGE STRIP ── */
+.edge-strip {
+  position: relative;
+  z-index: 2;
+  padding: 80px 10vw;
+  background: linear-gradient(135deg, rgba(0,102,255,0.08) 0%, rgba(123,47,255,0.08) 100%);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+.edge-text {
+  max-width: 560px;
+}
+.edge-text .section-h2 { margin-bottom: 14px; }
+.edge-text p { font-size: 16px; line-height: 1.7; color: var(--muted); }
+
+/* ── CONTACT ── */
+#contact { background: var(--bg); }
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.contact-links { display: flex; flex-direction: column; gap: 20px; }
+.contact-link {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 24px 28px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text);
+  font-size: 14px;
+  transition: all .35s var(--ease);
+  cursor: none;
+}
+.contact-link:hover {
+  background: rgba(0,229,255,0.06);
+  border-color: rgba(0,229,255,0.25);
+  color: var(--white);
+  transform: translateX(6px);
+}
+.contact-link i {
+  font-size: 18px;
+  color: var(--accent);
+  width: 24px;
+  text-align: center;
+}
+.contact-info-block { color: var(--muted); line-height: 1.8; }
+.contact-info-block strong { color: var(--white); font-family: var(--ff-head); }
+
+/* ── FOOTER ── */
+footer {
+  position: relative;
+  z-index: 2;
+  border-top: 1px solid var(--border);
+  padding: 36px 10vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-left {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: .5px;
+}
+.footer-left strong { color: var(--accent); }
+.footer-right {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity:0; transform: translateY(24px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity:0; }
+  to   { opacity:1; }
+}
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+@keyframes pulse {
+  0%,100% { opacity:.4; }
+  50%      { opacity:1; }
+}
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── REVEAL ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity .8s var(--ease), transform .8s var(--ease);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 960px) {
+  nav { padding: 18px 24px; }
+  nav.scrolled { padding: 12px 24px; }
+  #hero { padding: 0 6vw; }
+  .hero-stats { display: none; }
+  section { padding: 80px 6vw; }
+  #about { grid-template-columns: 1fr; gap: 48px; }
+  .expertise-grid { grid-template-columns: 1fr 1fr; }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  footer { padding: 28px 6vw; }
+  .edge-strip { padding: 60px 6vw; }
+}
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .expertise-grid { grid-template-columns: 1fr; }
+  .about-right { grid-template-columns: 1fr; }
+  .hero-h1 { letter-spacing: -2px; }
+  .hero-cta { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- Animated canvas background -->
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#" class="nav-logo">ARTI<span>QUANT</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#expertise">Expertise</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <p class="hero-tag">// Quantitative &amp; Technical LLP — est. 2022</p>
+  <h1 class="hero-h1">Edge built<br>on <em>signal,</em><br>not noise.</h1>
+  <p class="hero-sub">Artiquant engineers systematic alpha through quantitative research, AI-native trading systems, and institutional-grade risk frameworks — operating at the intersection of mathematics, code, and markets.</p>
+  <div class="hero-cta">
+    <a href="#expertise" class="btn btn-primary">Our Expertise</a>
+    <a href="#contact" class="btn btn-ghost">Get in Touch</a>
+  </div>
+
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="stat-num">9<span>+</span></div>
+      <div class="stat-label">Core Strategies</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">∞</div>
+      <div class="stat-label">Compute Hours / Year</div>
+    </div>
+    <div class="stat">
+      <div class="stat-num">0<span>x</span></div>
+      <div class="stat-label">Human Emotion in Trade Logic</div>
+    </div>
+  </div>
+
+  <div class="scroll-hint">
+    <div class="scroll-line"></div>
+    scroll to explore
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker-inner">
+    <span class="ticker-item">NQ E-Mini Futures <span>▸</span></span>
+    <span class="ticker-item">Kalman Filter Price Tracking <span>▸</span></span>
+    <span class="ticker-item">HMM Regime Detection <span>▸</span></span>
+    <span class="ticker-item">Bayesian Signal Updating <span>▸</span></span>
+    <span class="ticker-item">Kelly Criterion Sizing <span>▸</span></span>
+    <span class="ticker-item">Ornstein-Uhlenbeck Mean Reversion <span>▸</span></span>
+    <span class="ticker-item">VWAP Deviation Models <span>▸</span></span>
+    <span class="ticker-item">HAR-RV Volatility <span>▸</span></span>
+    <span class="ticker-item">Monte Carlo Simulation <span>▸</span></span>
+    <span class="ticker-item">CVaR Risk Budgeting <span>▸</span></span>
+    <!-- duplicate for seamless loop -->
+    <span class="ticker-item">NQ E-Mini Futures <span>▸</span></span>
+    <span class="ticker-item">Kalman Filter Price Tracking <span>▸</span></span>
+    <span class="ticker-item">HMM Regime Detection <span>▸</span></span>
+    <span class="ticker-item">Bayesian Signal Updating <span>▸</span></span>
+    <span class="ticker-item">Kelly Criterion Sizing <span>▸</span></span>
+    <span class="ticker-item">Ornstein-Uhlenbeck Mean Reversion <span>▸</span></span>
+    <span class="ticker-item">VWAP Deviation Models <span>▸</span></span>
+    <span class="ticker-item">HAR-RV Volatility <span>▸</span></span>
+    <span class="ticker-item">Monte Carlo Simulation <span>▸</span></span>
+    <span class="ticker-item">CVaR Risk Budgeting <span>▸</span></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text reveal">
+    <p class="section-label">// 01 — about</p>
+    <h2 class="section-h2">Systematic<br>by design.</h2>
+    <p class="section-sub">Artiquant is a quantitative and technical LLP built on a single conviction: alpha is earned through rigorous research, not intuition. We combine advanced stochastic modeling, AI agent architectures, and institutional risk engineering to systematically identify and capture trading opportunities across futures, equities, and digital asset markets.</p>
+    <a href="#expertise" class="btn btn-ghost">See Our Stack →</a>
+  </div>
+  <div class="about-right reveal">
+    <div class="about-card">
+      <div class="about-card-icon"><i class="fas fa-wave-square"></i></div>
+      <h4>Signal Research</h4>
+      <p>Multi-factor alpha discovery with statistical validation and regime-awareness.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-card-icon"><i class="fas fa-microchip"></i></div>
+      <h4>Execution Systems</h4>
+      <p>Low-latency, rule-based order routing with SPRT-based edge monitoring.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-card-icon"><i class="fas fa-shield-halved"></i></div>
+      <h4>Risk Architecture</h4>
+      <p>VaR, CVaR, Calmar-optimised drawdown control and Kelly position sizing.</p>
+    </div>
+    <div class="about-card">
+      <div class="about-card-icon"><i class="fas fa-robot"></i></div>
+      <h4>AI-Native Research</h4>
+      <p>LLM-powered financial intelligence and autonomous research agents.</p>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERTISE -->
+<section id="expertise">
+  <div class="reveal">
+    <p class="section-label">// 02 — expertise</p>
+    <h2 class="section-h2">Where we<br>operate.</h2>
+    <p class="section-sub">Nine domains. One unified quantitative framework.</p>
+  </div>
+
+  <div class="expertise-grid reveal">
+
+    <div class="exp-card">
+      <div class="exp-num">01</div>
+      <div class="exp-icon"><i class="fas fa-chart-line"></i></div>
+      <h3>Quantitative Trading Strategies</h3>
+      <p>Data-driven alpha generation using stochastic models, Bayesian inference, and multi-regime frameworks. Every strategy statistically validated before deployment.</p>
+      <span class="exp-tag">Core</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">02</div>
+      <div class="exp-icon"><i class="fas fa-magnifying-glass-chart"></i></div>
+      <h3>Technical &amp; Market Microstructure</h3>
+      <p>Order flow analysis, footprint-based POC defense, delta divergence reversal, and stacked imbalance breakout strategies on NQ and equity index futures.</p>
+      <span class="exp-tag">Execution</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">03</div>
+      <div class="exp-icon"><i class="fas fa-code"></i></div>
+      <h3>Algorithmic &amp; Systematic Trading</h3>
+      <p>Pre-programmed instruction sets with state-machine anti-spam, SPRT edge-degradation detection, and full Pine Script v5 / ThinkScript multi-platform deployment.</p>
+      <span class="exp-tag">Systematic</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">04</div>
+      <div class="exp-icon"><i class="fas fa-shield-halved"></i></div>
+      <h3>Institutional Risk Management</h3>
+      <p>VaR / CVaR budgeting, fractional Kelly sizing, Calmar-optimised drawdown control, Sharpe/Sortino monitoring, and real-time risk dashboards.</p>
+      <span class="exp-tag">Risk</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">05</div>
+      <div class="exp-icon"><i class="fas fa-microchip"></i></div>
+      <h3>Financial Technology Engineering</h3>
+      <p>Production-grade GUI tools — Python CustomTkinter risk analytics suites, PyQt6 research browsers, Tkinter evaluation apps — all dark-themed and zero-dependency.</p>
+      <span class="exp-tag">Fintech</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">06</div>
+      <div class="exp-icon"><i class="fas fa-brain"></i></div>
+      <h3>AI Agents for Financial Research</h3>
+      <p>Autonomous LLM agent pipelines for market intelligence, earnings analysis, and regulatory monitoring — replacing hours of manual research with structured inference.</p>
+      <span class="exp-tag">AI · 2026</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">07</div>
+      <div class="exp-icon"><i class="fas fa-network-wired"></i></div>
+      <h3>Machine Learning &amp; Regime Detection</h3>
+      <p>Hidden Markov Models for market regime classification, Kalman filter price tracking, and Ornstein-Uhlenbeck VWAP deviation frameworks — all production-deployed.</p>
+      <span class="exp-tag">ML</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">08</div>
+      <div class="exp-icon"><i class="fas fa-comments-dollar"></i></div>
+      <h3>LLM Financial Prompt Engineering</h3>
+      <p>Designing structured prompt architectures for financial domain LLM applications — earnings call parsing, SEC filing distillation, and quantitative narrative extraction.</p>
+      <span class="exp-tag">Research</span>
+    </div>
+
+    <div class="exp-card">
+      <div class="exp-num">09</div>
+      <div class="exp-icon"><i class="fas fa-layer-group"></i></div>
+      <h3>Prop Firm Strategy Optimisation</h3>
+      <p>Mathematical payout engineering for funded account challenges — Tradeify, Lucid, MyFundedFutures — with five-dimensional constraint modelling and drawdown-first sizing.</p>
+      <span class="exp-tag">Applied</span>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDGE STRIP -->
+<div class="edge-strip reveal">
+  <div class="edge-text">
+    <p class="section-label">// 2026 direction</p>
+    <h2 class="section-h2">Global. Systematic. Expanding.</h2>
+    <p>From India to global markets — Artiquant is building the operational and quantitative infrastructure for the next phase of systematic trading, with institutional-grade tooling and AI-native research workflows.</p>
+  </div>
+  <a href="#contact" class="btn btn-primary" style="flex-shrink:0;">Connect with Us</a>
+</div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-grid">
+    <div class="reveal">
+      <p class="section-label">// 03 — contact</p>
+      <h2 class="section-h2">Let's build<br>edge together.</h2>
+      <p class="section-sub">Collaborations, research partnerships, and quantitative consulting — we're always interested in conversations with serious market participants.</p>
+
+      <div class="contact-info-block">
+        <p><strong>Artiquant LLP</strong><br>
+        Quantitative &amp; Technical Trading<br>
+        India · Global Markets</p>
+      </div>
+    </div>
+
+    <div class="contact-links reveal">
+      <a href="mailto:artiquant@gmail.com" class="contact-link">
+        <i class="fas fa-envelope"></i>
+        artiquant@gmail.com
+      </a>
+      <a href="https://twitter.com/quant618" target="_blank" rel="noopener" class="contact-link">
+        <i class="fab fa-x-twitter"></i>
+        @quant618 on X
+      </a>
+      <a href="https://github.com/Prat617/artiquant" target="_blank" rel="noopener" class="contact-link">
+        <i class="fab fa-github"></i>
+        github.com/Prat617/artiquant
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">&copy; 2026 <strong>Artiquant</strong> LLP. All rights reserved.</div>
+  <div class="footer-right">Quantitative &amp; Technical · India</div>
+</footer>
+
+<script>
+/* ── CURSOR ── */
+const cursor = document.getElementById('cursor');
+const ring   = document.getElementById('cursor-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function moveCursor(){
+  rx += (mx-rx)*.12; ry += (my-ry)*.12;
+  cursor.style.left = mx+'px'; cursor.style.top = my+'px';
+  ring.style.left   = rx+'px'; ring.style.top   = ry+'px';
+  requestAnimationFrame(moveCursor);
+})();
+
+/* ── NAVBAR SCROLL ── */
+const nav = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+/* ── CANVAS BACKGROUND (grid + floating orbs) ── */
+const canvas = document.getElementById('bg-canvas');
+const ctx    = canvas.getContext('2d');
+let W, H;
+function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
+resize(); window.addEventListener('resize', resize);
+
+// Grid lines
+function drawGrid(){
+  ctx.clearRect(0,0,W,H);
+  const gapX=80, gapY=80;
+  ctx.strokeStyle='rgba(0,229,255,0.04)';
+  ctx.lineWidth=1;
+  for(let x=0;x<W;x+=gapX){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+  for(let y=0;y<H;y+=gapY){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+}
+
+// Orbs
+const orbs = Array.from({length:5}, (_,i) => ({
+  x: Math.random()*W, y: Math.random()*H,
+  r: 200+Math.random()*200,
+  vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.3,
+  hue: [200,220,260,180,240][i]
+}));
+
+function drawOrbs(){
+  orbs.forEach(o => {
+    const g = ctx.createRadialGradient(o.x,o.y,0, o.x,o.y,o.r);
+    g.addColorStop(0, `hsla(${o.hue},100%,55%,0.07)`);
+    g.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(o.x,o.y,o.r,0,Math.PI*2);
+    ctx.fillStyle=g;
+    ctx.fill();
+    o.x+=o.vx; o.y+=o.vy;
+    if(o.x<-o.r||o.x>W+o.r) o.vx*=-1;
+    if(o.y<-o.r||o.y>H+o.r) o.vy*=-1;
+  });
+}
+
+function animate(){ drawGrid(); drawOrbs(); requestAnimationFrame(animate); }
+animate();
+
+/* ── SCROLL REVEAL ── */
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => {
+    if(e.isIntersecting){
+      setTimeout(()=>e.target.classList.add('visible'), i*80);
+      observer.unobserve(e.target);
+    }
+  });
+}, { threshold:0.1 });
+reveals.forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
