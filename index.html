@@ -92,7 +92,7 @@ nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 22px 48px;
+  padding: 16px 48px;
   background: rgba(5,6,8,0);
   border-bottom: 1px solid transparent;
   transition: background .4s, border-color .4s, padding .4s;
@@ -100,23 +100,47 @@ nav {
 nav.scrolled {
   background: rgba(5,6,8,0.88);
   border-color: var(--border);
-  padding: 14px 48px;
+  padding: 10px 48px;
   backdrop-filter: blur(20px);
 }
+
+/* ── LOGO ── */
 .nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+.nav-logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+  /* keep crisp on retina */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  transition: opacity .3s var(--ease), transform .3s var(--ease);
+  /* subtle drop-shadow so it reads on the dark bg */
+  filter: drop-shadow(0 0 8px rgba(0,229,255,0.18));
+}
+nav.scrolled .nav-logo-img {
+  height: 34px;
+}
+.nav-logo:hover .nav-logo-img {
+  opacity: .85;
+  transform: scale(1.04);
+}
+
+/* Fallback text (shown if image fails) */
+.nav-logo-fallback {
   font-family: var(--ff-head);
   font-size: 20px;
   font-weight: 800;
   letter-spacing: -.5px;
   color: var(--white);
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  display: none; /* hidden by default; JS shows if img errors */
 }
-.nav-logo span {
-  color: var(--accent);
-}
+.nav-logo-fallback span { color: var(--accent); }
+
 .nav-links { display: flex; gap: 36px; list-style: none; }
 .nav-links a {
   font-family: var(--ff-mono);
@@ -520,7 +544,7 @@ footer {
   position: relative;
   z-index: 2;
   border-top: 1px solid var(--border);
-  padding: 36px 10vw;
+  padding: 28px 10vw;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -528,11 +552,25 @@ footer {
   gap: 16px;
 }
 .footer-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.footer-logo-img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  filter: drop-shadow(0 0 6px rgba(0,229,255,0.15));
+  opacity: .75;
+  transition: opacity .3s;
+}
+.footer-logo-img:hover { opacity: 1; }
+.footer-copy {
   font-size: 12px;
   color: var(--muted);
   letter-spacing: .5px;
 }
-.footer-left strong { color: var(--accent); }
+.footer-copy strong { color: var(--accent); }
 .footer-right {
   font-size: 11px;
   letter-spacing: 2px;
@@ -575,15 +613,17 @@ footer {
 
 /* ── RESPONSIVE ── */
 @media (max-width: 960px) {
-  nav { padding: 18px 24px; }
-  nav.scrolled { padding: 12px 24px; }
+  nav { padding: 14px 24px; }
+  nav.scrolled { padding: 10px 24px; }
+  .nav-logo-img { height: 36px; }
+  nav.scrolled .nav-logo-img { height: 30px; }
   #hero { padding: 0 6vw; }
   .hero-stats { display: none; }
   section { padding: 80px 6vw; }
   #about { grid-template-columns: 1fr; gap: 48px; }
   .expertise-grid { grid-template-columns: 1fr 1fr; }
   .contact-grid { grid-template-columns: 1fr; gap: 48px; }
-  footer { padding: 28px 6vw; }
+  footer { padding: 24px 6vw; }
   .edge-strip { padding: 60px 6vw; }
 }
 @media (max-width: 600px) {
@@ -592,6 +632,7 @@ footer {
   .about-right { grid-template-columns: 1fr; }
   .hero-h1 { letter-spacing: -2px; }
   .hero-cta { flex-direction: column; }
+  .nav-logo-img { height: 32px; }
 }
 </style>
 </head>
@@ -605,7 +646,16 @@ footer {
 
 <!-- NAV -->
 <nav id="navbar">
-  <a href="#" class="nav-logo">ARTI<span>QUANT</span></a>
+  <a href="#" class="nav-logo">
+    <img
+      class="nav-logo-img"
+      src="https://raw.githubusercontent.com/Prat617/artiquant/main/Artiquant%20Logo.png"
+      alt="Artiquant Logo"
+      id="nav-logo-img"
+    >
+    <!-- fallback text shown only if image fails to load -->
+    <span class="nav-logo-fallback" id="nav-logo-fallback">ARTI<span>QUANT</span></span>
+  </a>
   <ul class="nav-links">
     <li><a href="#about">About</a></li>
     <li><a href="#expertise">Expertise</a></li>
@@ -822,15 +872,21 @@ footer {
         <i class="fab fa-x-twitter"></i>
         @quant618 on X
       </a>
-    
-      </a>
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-left">&copy; 2026 <strong>Artiquant</strong> LLP. All rights reserved.</div>
+  <div class="footer-left">
+    <img
+      class="footer-logo-img"
+      src="https://raw.githubusercontent.com/Prat617/artiquant/main/Artiquant%20Logo.png"
+      alt="Artiquant"
+      id="footer-logo-img"
+    >
+    <span class="footer-copy">&copy; 2026 <strong>Artiquant</strong> LLP. All rights reserved.</span>
+  </div>
   <div class="footer-right">Quantitative &amp; Technical · India</div>
 </footer>
 
@@ -847,6 +903,19 @@ document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
   requestAnimationFrame(moveCursor);
 })();
 
+/* ── LOGO FALLBACK ── */
+const navImg      = document.getElementById('nav-logo-img');
+const navFallback = document.getElementById('nav-logo-fallback');
+const footImg     = document.getElementById('footer-logo-img');
+
+navImg.addEventListener('error', () => {
+  navImg.style.display = 'none';
+  navFallback.style.display = 'block';
+});
+footImg.addEventListener('error', () => {
+  footImg.style.display = 'none';
+});
+
 /* ── NAVBAR SCROLL ── */
 const nav = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
@@ -860,7 +929,6 @@ let W, H;
 function resize(){ W=canvas.width=window.innerWidth; H=canvas.height=window.innerHeight; }
 resize(); window.addEventListener('resize', resize);
 
-// Grid lines
 function drawGrid(){
   ctx.clearRect(0,0,W,H);
   const gapX=80, gapY=80;
@@ -870,7 +938,6 @@ function drawGrid(){
   for(let y=0;y<H;y+=gapY){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
 }
 
-// Orbs
 const orbs = Array.from({length:5}, (_,i) => ({
   x: Math.random()*W, y: Math.random()*H,
   r: 200+Math.random()*200,
